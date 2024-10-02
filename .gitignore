@@ -56,3 +56,4 @@ outputs/models/*.h5
 *.tar
 *.tar.gz
 *.rar
+diabetes.csv
