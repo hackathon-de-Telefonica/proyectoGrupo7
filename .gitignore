@@ -1,0 +1,58 @@
+# Ignorar el entorno virtual
+venv/
+env13/
+# Archivos temporales de Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.log
+*.tmp
+*.temp
+
+# Archivos CSV que no quieres que Git rastree (ajusta según lo que quieras ignorar)
+data/train_processed.csv
+data/test_processed.csv
+data/combined.csv
+outputs/csv/*.csv   # Ignorar todos los CSVs generados en la carpeta outputs/csv
+
+# Ignorar archivos de notebooks checkpoints
+.ipynb_checkpoints/
+
+# Ignorar archivos de salida de Jupyter Notebooks
+*.nbconvert.ipynb
+*.nb.html
+
+# Ignorar archivos de configuración de IDEs
+.vscode/
+.idea/
+
+# Archivos de logs y otros archivos de desarrollo
+*.log
+*.out
+*.err
+*.bak
+
+# Ignorar archivos de configuración del sistema operativo
+.DS_Store      # macOS
+Thumbs.db      # Windows
+
+# Ignorar gráficos o imágenes generadas
+outputs/graphs/*.png
+outputs/graphs/*.jpg
+outputs/graphs/otros_graficos/*.png
+outputs/graphs/otros_graficos/*.jpg
+
+# Ignorar modelos entrenados (dependiendo si no quieres incluir el modelo en el repo)
+outputs/models/*.pkl
+outputs/models/*.h5
+
+# Otros archivos binarios
+*.bin
+*.swp
+
+# Archivos grandes o de prueba que no deberían rastrearse
+*.zip
+*.tar
+*.tar.gz
+*.rar
