@@ -60,7 +60,7 @@ async def predict_diabetes(features: DiabetesFeatures):
 def save_to_database(features: DiabetesFeatures, prediction: float):
     try:
         connection = mysql.connector.connect(
-            host='localhost',
+            host='localhost:3306',
             database='diabetes_predictions',
             user='your_username',
             password='your_password'
