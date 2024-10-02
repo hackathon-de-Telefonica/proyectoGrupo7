@@ -74,8 +74,8 @@ try:
     connection = mysql.connector.connect(
         host='localhost',
         database='diabetes_predictions',
-        user='your_username',
-        password='your_password'
+        user='root',
+        password='admin'
     )
     
     query = "SELECT * FROM predictions ORDER BY id DESC LIMIT 10"
