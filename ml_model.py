@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix, classification_report
-from imblearn.combine import SMOTEENN 
+from imblearn.combine import SMOTEENN
 from xgboost import XGBClassifier
 import joblib
 
@@ -48,11 +48,13 @@ for fold, (train_index, val_index) in enumerate(skf.split(X_train_resampled, y_t
     X_train_fold, X_val_fold = X_train_resampled[train_index], X_train_resampled[val_index]
     y_train_fold, y_val_fold = y_train_resampled[train_index], y_train_resampled[val_index]
     
-    model.fit(X_train_fold, y_train_fold, 
-              eval_set=[(X_val_fold, y_val_fold)],
-              eval_metric='auc',
-              early_stopping_rounds=10,
-              verbose=False)
+    model.fit(
+        X_train_fold, 
+        y_train_fold,
+        eval_set=[(X_val_fold, y_val_fold)],
+        early_stopping_rounds=10,
+        verbose=False
+    )
     
     print(f'Best iteration: {model.best_iteration}')
 
