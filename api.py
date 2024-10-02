@@ -8,7 +8,7 @@ from mysql.connector import Error
 app = FastAPI()
 
 # Cargar el modelo y el scaler
-model = joblib.load('xgboost_model.joblib')
+model = joblib.load('random_forest.joblib')
 scaler = joblib.load('scaler.joblib')
 
 class DiabetesFeatures(BaseModel):
