@@ -38,8 +38,7 @@ model = XGBClassifier(
     objective='binary:logistic',
     nthread=4,
     scale_pos_weight=1,
-    seed=27,
-    eval_metric='logloss'  # Evalúa la pérdida logística durante el entrenamiento
+    seed=27
 )
 
 # Entrenamiento con validación cruzada estratificada
@@ -53,10 +52,13 @@ for fold, (train_index, val_index) in enumerate(skf.split(X_train_resampled, y_t
         X_train_fold, 
         y_train_fold,
         eval_set=[(X_val_fold, y_val_fold)],
+        eval_metric='logloss',  # Usar logloss como métrica de evaluación
+        early_stopping_rounds=10,  # Usar early stopping
         verbose=False
     )
     
-    print(f'Best iteration: {model.get_booster().best_iteration}')
+    # Ahora puedes acceder a best_iteration porque estás usando early stopping
+    print(f'Best iteration: {model.best_iteration}')
 
 # Evaluación final en el conjunto de prueba
 y_pred = model.predict(X_test_scaled)
@@ -68,3 +70,4 @@ print(classification_report(y_test, y_pred))
 # Guardar el modelo y el scaler
 joblib.dump(model, 'xgboost_model.joblib')
 joblib.dump(scaler, 'scaler.joblib')
+
