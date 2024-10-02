@@ -38,7 +38,8 @@ model = XGBClassifier(
     objective='binary:logistic',
     nthread=4,
     scale_pos_weight=1,
-    seed=27
+    seed=27,
+    eval_metric='logloss'  # Evalúa la pérdida logística durante el entrenamiento
 )
 
 # Entrenamiento con validación cruzada estratificada
@@ -52,11 +53,10 @@ for fold, (train_index, val_index) in enumerate(skf.split(X_train_resampled, y_t
         X_train_fold, 
         y_train_fold,
         eval_set=[(X_val_fold, y_val_fold)],
-        early_stopping_rounds=10,
         verbose=False
     )
     
-    print(f'Best iteration: {model.best_iteration}')
+    print(f'Best iteration: {model.get_booster().best_iteration}')
 
 # Evaluación final en el conjunto de prueba
 y_pred = model.predict(X_test_scaled)
