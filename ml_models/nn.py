@@ -1,4 +1,3 @@
-import joblib
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, StratifiedKFold, RandomizedSearchCV
@@ -7,9 +6,10 @@ from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from scikeras.wrappers import KerasClassifier
+import joblib
 
 # 1. Preparar el dataset completo
-# df_diabetes = pd.read_csv('ruta_a_tu_archivo.csv')
+diabetes_df = pd.read_csv('diabetes.csv')
 
 X = diabetes_df.drop('Diabetes_binary', axis=1)
 y = diabetes_df['Diabetes_binary']
