@@ -32,55 +32,146 @@ st.markdown("""
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Glucose_molecule.png/220px-Glucose_molecule.png" alt="Diabetes Prediction" style="width: 150px; border-radius: 10px;">
 </div>
 """, unsafe_allow_html=True)
+
+# Función para convertir 'Sí'/'No' a 1/0
+def convertir_a_binario(opcion):
+    return 1 if opcion == 'Sí' else 0
+
+# Para género
+def convertir_genero(opcion):
+    return 1 if opcion == 'Hombre' else 0
+
+
+# Diccionario para mapear los valores de texto a los numéricos
+genhlth_map = {
+    'Excelente': 1,
+    'Muy bien': 2,
+    'Bien': 3,
+    'Regular': 4,
+    'Mal': 5
+}
+
+education_map={'Educación primaria':1,
+               'Educación básica':2,
+               'Educación Secundaria':3,
+               'Educación Bachillerato':4,
+               'Formación Profesional o Educación superior < 3 años':5,
+               'Educación universitaria y/o superior':6}
+
+
+# Diccionario de categorías por rango de edad
+age_category_map = {
+    (18, 24): 1,
+    (25, 29): 2,
+    (30, 34): 3,
+    (35, 39): 4,
+    (40, 44): 5,
+    (45, 49): 6,
+    (50, 54): 7,
+    (55, 59): 8,
+    (60, 64): 9,
+    (65, 69): 10,
+    (70, 74): 11,
+    (75, 79): 12,
+    (80, 100): 13  # 80 o más años
+}
+# Función para edad
+def categorizar_edad(edad):
+    for rango, categoria in age_category_map.items():
+        if rango[0] <= edad <= rango[1]:
+            return categoria
+    return None  # En caso de que la edad no esté en ningún rango
+
+
+# Diccionario para mapear los rangos de ingresos a categorías
+income_category_map = {
+    (0, 9999): 1,
+    (10000, 14999): 2,
+    (15000, 19999): 3,
+    (20000, 24999): 4,
+    (25000, 34999): 5,
+    (35000, 49999): 6,
+    (50000, 74999): 7,
+    (75000, float('inf')): 8  # Ingresos de $75,000 o más
+}
+
+def categorizar_ingreso(income):
+    for rango, categoria in income_category_map.items():
+        if rango[0] <= Income <= rango[1]:
+            return categoria
+    return None  # En caso de que el ingreso no esté en ningún rango
+
+import streamlit as st
+
+
+
 st.title('Predicción de Diabetes')
 
 # Formulario de entrada
-HighBP = st.selectbox('Presión arterial alta', [0, 1])
-HighChol = st.selectbox('Colesterol alto', [0, 1])
-CholCheck = st.selectbox('Chequeo de colesterol', [0, 1])
-BMI = st.number_input('IMC', min_value=0.0, max_value=50.0, value=25.0)
-Smoker = st.selectbox('Fumador', [0, 1])
-Stroke = st.selectbox('Accidente cerebrovascular', [0, 1])
-HeartDiseaseorAttack = st.selectbox('Enfermedad cardíaca o ataque', [0, 1])
-PhysActivity = st.selectbox('Actividad física', [0, 1])
-Fruits = st.selectbox('Consumo de frutas', [0, 1])
-Veggies = st.selectbox('Consumo de verduras', [0, 1])
-HvyAlcoholConsump = st.selectbox('Consumo excesivo de alcohol', [0, 1])
-AnyHealthcare = st.selectbox('Tiene seguro de salud', [0, 1])
-NoDocbcCost = st.selectbox('No visita al médico por costo', [0, 1])
-GenHlth = st.slider('Salud general', min_value=1, max_value=5, value=3)
-MentHlth = st.slider('Días de mala salud mental en el último mes', min_value=0, max_value=30, value=0)
-PhysHlth = st.slider('Días de mala salud física en el último mes', min_value=0, max_value=30, value=0)
-DiffWalk = st.selectbox('Dificultad para caminar', [0, 1])
-Sex = st.selectbox('Sexo', [0, 1])
+HighBP = st.selectbox('Presión arterial alta', ['Sí', 'No'])
+CholCheck = st.selectbox('Chequeo de colesterol.', ['Sí', 'No'], help='Chequeo en los últimos 5 años.')
+HighChol = st.selectbox('Colesterol alto', ['Sí', 'No'])
+
+
+#BMI = st.number_input('IMC', min_value=0.0, max_value=50.0, value=25.0)
+estatura=st.number_input('Estatura (m)', min_value=1.0, max_value=210.0)
+peso=st.number_input('Peso (kg)', min_value=0.0)
+BMI=round((peso/(estatura)**2),2)
+Smoker = st.selectbox('Fumador', ['Sí', 'No'], help='Se considera como fumador haber consumido al menos 100 cigarrillos en su vida.')
+Stroke = st.selectbox('Accidente cerebrovascular', ['Sí', 'No'])
+HeartDiseaseorAttack = st.selectbox('Enfermedad coronaria o infarto de miocardio', ['Sí', 'No'])
+PhysActivity = st.selectbox('Actividad física de forma continuada ', ['Sí', 'No'], help='Durante de 30 días')
+Fruits = st.selectbox('Consumo de frutas', ['Sí', 'No'], help='Una o más frutas por día.')
+Veggies = st.selectbox('Consumo de verduras', ['Sí', 'No'], help='Una o más verduras por día')
+HvyAlcoholConsump = st.selectbox('Consumo de alcohol por semana', ['Sí', 'No'], help='Hombre:14\nMujer:7')
+AnyHealthcare = st.selectbox('Tiene seguro de salud', ['Sí', 'No'])
+NoDocbcCost = st.selectbox('No visita al médico por costo', ['Sí', 'No'])
+
+#GenHlth
+GenHlth_text = st.selectbox('Salud general', options=['Excelente', 'Muy bien', 'Bien', 'Regular', 'Mal'])
+# Convertir el valor seleccionado a su correspondiente numérico
+GenHlth = genhlth_map[GenHlth_text]
+
+MentHlth = st.slider('Promedio de días en los que su estado anímico se ha visto afectado.', min_value=0, max_value=30, value=0,help='Ingresa el número promedio de días en que has experimentado problemas de salud mental en el último mes. Incluye stress, depresión.')
+PhysHlth = st.slider('Promedio de días en los que su estado físico se ha visto afectado', min_value=0, max_value=30, value=0, help='Ingresa el número promedio de días en que has experimentado problemas de salud física en el último mes. Incluye dolor, enfermedad.')
+DiffWalk = st.selectbox('Dificultad respiratoria al caminar o subir escaleras', ['Sí', 'No'])
+
+Sex = st.selectbox('Sexo', ['Mujer', 'Hombre'])
+
 Age = st.slider('Edad', min_value=18, max_value=100, value=30)
-Education = st.slider('Nivel de educación', min_value=1, max_value=6, value=4)
-Income = st.slider('Nivel de ingresos', min_value=1, max_value=8, value=4)
+
+# Crear el selectbox con los valores equivalentes
+Education_text= st.selectbox('Nivel de educación', options=['Educación primaria', 'Educación básica', 'Educación Secundaria', 'Educación Bachillerato', 'Formación Profesional o Educación superior < 3 años','Educación universitaria y/o superior'])
+Education=education_map[Education_text]
+
+
+Income = st.slider('Nivel de ingresos anuales',  min_value=0, max_value=100000, step=1000, value=24000)
+#income_cat = st.slider('Selecciona tu ingreso anual ($)', min_value=0, max_value=100000, step=1000, value=24000)
 
 if st.button('Predecir'):
     # Preparar los datos para la API
     data = {
-        "HighBP": HighBP,
-        "HighChol": HighChol,
-        "CholCheck": CholCheck,
+        "HighBP": convertir_a_binario(HighBP),
+        "HighChol": convertir_a_binario(HighChol),
+        "CholCheck": convertir_a_binario(CholCheck),
         "BMI": BMI,
-        "Smoker": Smoker,
-        "Stroke": Stroke,
-        "HeartDiseaseorAttack": HeartDiseaseorAttack,
-        "PhysActivity": PhysActivity,
-        "Fruits": Fruits,
-        "Veggies": Veggies,
-        "HvyAlcoholConsump": HvyAlcoholConsump,
-        "AnyHealthcare": AnyHealthcare,
-        "NoDocbcCost": NoDocbcCost,
-        "GenHlth": GenHlth,
+        "Smoker": convertir_a_binario(Smoker),
+        "Stroke": convertir_a_binario(Stroke),
+        "HeartDiseaseorAttack": convertir_a_binario(HeartDiseaseorAttack),
+        "PhysActivity": convertir_a_binario(PhysActivity),
+        "Fruits":convertir_a_binario(Fruits),
+        "Veggies": convertir_a_binario(Veggies),
+        "HvyAlcoholConsump": convertir_a_binario(HvyAlcoholConsump),
+        "AnyHealthcare": convertir_a_binario(AnyHealthcare),
+        "NoDocbcCost": convertir_a_binario(NoDocbcCost),
+        "GenHlth":GenHlth,
         "MentHlth": MentHlth,
         "PhysHlth": PhysHlth,
-        "DiffWalk": DiffWalk,
-        "Sex": Sex,
-        "Age": Age,
+        "DiffWalk": convertir_a_binario(DiffWalk),
+        "Sex": convertir_genero(Sex),
+        "Age": categorizar_edad(Age),
         "Education": Education,
-        "Income": Income
+        "Income": categorizar_ingreso(Income)
     }
     
     # Hacer la solicitud a la API
