@@ -112,59 +112,72 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Contenido de la Navbar
-with st.container():
-    st.markdown('<div class="navbar">', unsafe_allow_html=True)
-    st.image("src/assets/images/logo-glucosense.png", use_column_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # Formulario de entrada
-HighBP = st.selectbox('Presión arterial alta', [0, 1])
-HighChol = st.selectbox('Colesterol alto', [0, 1])
-CholCheck = st.selectbox('Chequeo de colesterol', [0, 1])
-BMI = st.number_input('IMC', min_value=0.0, max_value=50.0, value=25.0)
-Smoker = st.selectbox('Fumador', [0, 1])
-Stroke = st.selectbox('Accidente cerebrovascular', [0, 1])
-HeartDiseaseorAttack = st.selectbox('Enfermedad cardíaca o ataque', [0, 1])
-PhysActivity = st.selectbox('Actividad física', [0, 1])
-Fruits = st.selectbox('Consumo de frutas', [0, 1])
-Veggies = st.selectbox('Consumo de verduras', [0, 1])
-HvyAlcoholConsump = st.selectbox('Consumo excesivo de alcohol', [0, 1])
-AnyHealthcare = st.selectbox('Tiene seguro de salud', [0, 1])
-NoDocbcCost = st.selectbox('No visita al médico por costo', [0, 1])
-GenHlth = st.slider('Salud general', min_value=1, max_value=5, value=3)
-MentHlth = st.slider('Días de mala salud mental en el último mes', min_value=0, max_value=30, value=0)
-PhysHlth = st.slider('Días de mala salud física en el último mes', min_value=0, max_value=30, value=0)
-DiffWalk = st.selectbox('Dificultad para caminar', [0, 1])
-Sex = st.selectbox('Sexo', [0, 1])
+HighBP = st.selectbox('Presión arterial alta', ['Sí', 'No'])
+CholCheck = st.selectbox('Chequeo de colesterol.', ['Sí', 'No'], help='Chequeo en los últimos 5 años.')
+HighChol = st.selectbox('Colesterol alto', ['Sí', 'No'])
+
+
+#BMI = st.number_input('IMC', min_value=0.0, max_value=50.0, value=25.0)
+estatura=st.number_input('Estatura (m)', min_value=1.0, max_value=210.0)
+peso=st.number_input('Peso (kg)', min_value=0.0)
+BMI=round((peso/(estatura)**2),2)
+Smoker = st.selectbox('Fumador', ['Sí', 'No'], help='Se considera como fumador haber consumido al menos 100 cigarrillos en su vida.')
+Stroke = st.selectbox('Accidente cerebrovascular', ['Sí', 'No'])
+HeartDiseaseorAttack = st.selectbox('Enfermedad coronaria o infarto de miocardio', ['Sí', 'No'])
+PhysActivity = st.selectbox('Actividad física de forma continuada ', ['Sí', 'No'], help='Durante de 30 días')
+Fruits = st.selectbox('Consumo de frutas', ['Sí', 'No'], help='Una o más frutas por día.')
+Veggies = st.selectbox('Consumo de verduras', ['Sí', 'No'], help='Una o más verduras por día')
+HvyAlcoholConsump = st.selectbox('Consumo de alcohol por semana', ['Sí', 'No'], help='Seleccione "Sí" si su consumo supera Hombre:14 | Mujer:7')
+AnyHealthcare = st.selectbox('Tiene seguro de salud', ['Sí', 'No'])
+NoDocbcCost = st.selectbox('No ha podido acudir al médico por razones económicas en el último año.', ['Sí', 'No'])
+
+#GenHlth
+GenHlth_text = st.selectbox('Salud general', options=['Excelente', 'Muy bien', 'Bien', 'Regular', 'Mal'])
+# Convertir el valor seleccionado a su correspondiente numérico
+GenHlth = genhlth_map[GenHlth_text]
+
+MentHlth = st.slider('Promedio de días en los que su estado anímico se ha visto afectado.', min_value=0, max_value=30, value=0,help='Ingresa el número promedio de días en que has experimentado problemas de salud mental en el último mes. Incluye stress, depresión.')
+PhysHlth = st.slider('Promedio de días en los que su estado físico se ha visto afectado', min_value=0, max_value=30, value=0, help='Ingresa el número promedio de días en que has experimentado problemas de salud física en el último mes. Incluye dolor, enfermedad.')
+DiffWalk = st.selectbox('Dificultad respiratoria al caminar o subir escaleras', ['Sí', 'No'])
+
+Sex = st.selectbox('Sexo', ['Mujer', 'Hombre'])
+
 Age = st.slider('Edad', min_value=18, max_value=100, value=30)
-Education = st.slider('Nivel de educación', min_value=1, max_value=6, value=4)
-Income = st.slider('Nivel de ingresos', min_value=1, max_value=8, value=4)
+
+# Crear el selectbox con los valores equivalentes
+Education_text= st.selectbox('Nivel de educación', options=['Educación primaria', 'Educación básica', 'Educación Secundaria', 'Educación Bachillerato', 'Formación Profesional o Educación superior < 3 años','Educación universitaria y/o superior'])
+Education=education_map[Education_text]
+
+
+Income = st.slider('Nivel de ingresos anuales',  min_value=0, max_value=100000, step=1000, value=24000)
+#income_cat = st.slider('Selecciona tu ingreso anual ($)', min_value=0, max_value=100000, step=1000, value=24000)
 
 if st.button('Predecir'):
     # Preparar los datos para la API
     data = {
-        "HighBP": HighBP,
-        "HighChol": HighChol,
-        "CholCheck": CholCheck,
+        "HighBP": convertir_a_binario(HighBP),
+        "HighChol": convertir_a_binario(HighChol),
+        "CholCheck": convertir_a_binario(CholCheck),
         "BMI": BMI,
-        "Smoker": Smoker,
-        "Stroke": Stroke,
-        "HeartDiseaseorAttack": HeartDiseaseorAttack,
-        "PhysActivity": PhysActivity,
-        "Fruits": Fruits,
-        "Veggies": Veggies,
-        "HvyAlcoholConsump": HvyAlcoholConsump,
-        "AnyHealthcare": AnyHealthcare,
-        "NoDocbcCost": NoDocbcCost,
-        "GenHlth": GenHlth,
+        "Smoker": convertir_a_binario(Smoker),
+        "Stroke": convertir_a_binario(Stroke),
+        "HeartDiseaseorAttack": convertir_a_binario(HeartDiseaseorAttack),
+        "PhysActivity": convertir_a_binario(PhysActivity),
+        "Fruits":convertir_a_binario(Fruits),
+        "Veggies": convertir_a_binario(Veggies),
+        "HvyAlcoholConsump": convertir_a_binario(HvyAlcoholConsump),
+        "AnyHealthcare": convertir_a_binario(AnyHealthcare),
+        "NoDocbcCost": convertir_a_binario(NoDocbcCost),
+        "GenHlth":GenHlth,
         "MentHlth": MentHlth,
         "PhysHlth": PhysHlth,
-        "DiffWalk": DiffWalk,
-        "Sex": Sex,
-        "Age": Age,
+        "DiffWalk": convertir_a_binario(DiffWalk),
+        "Sex": convertir_genero(Sex),
+        "Age": categorizar_edad(Age),
         "Education": Education,
-        "Income": Income
+        "Income": categorizar_ingreso(Income)
     }
     
     # Hacer la solicitud a la API
