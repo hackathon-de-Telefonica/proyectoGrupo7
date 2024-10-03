@@ -6,7 +6,32 @@ import pandas as pd
 import sqlite3
 import matplotlib.pyplot as plt
 from sklearn.exceptions import NotFittedError
+st.set_page_config(page_title="Predicción de Diabetes", page_icon="🩺", layout="wide")
 
+st.markdown("""
+<style>
+    body {
+        background-color: #e6ffe6;
+        color: #333;
+    }
+    .stApp {
+        background-image: linear-gradient(to bottom, #a8e6cf, #e6ffe6);
+    }
+    .stTextInput>div>div>input {
+        background-color: #f0fff0;
+    }
+    .stSelectbox>div>div>select {
+        background-color: #f0fff0;
+    }
+    .stNumberInput>div>div>input {
+        background-color: #f0fff0;
+    }
+</style>
+
+<div style="text-align: center; padding: 10px;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Glucose_molecule.png/220px-Glucose_molecule.png" alt="Diabetes Prediction" style="width: 150px; border-radius: 10px;">
+</div>
+""", unsafe_allow_html=True)
 st.title('Predicción de Diabetes')
 
 # Formulario de entrada
