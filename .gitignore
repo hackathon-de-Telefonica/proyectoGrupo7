@@ -1,5 +1,6 @@
 # Ignorar el entorno virtual
 venv/
+.venv/
 env13/
 # Archivos temporales de Python
 *.pyc
