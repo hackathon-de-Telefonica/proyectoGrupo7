@@ -112,6 +112,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Contenido de la Navbar
+with st.container():
+    st.markdown('<div class="navbar">', unsafe_allow_html=True)
+    st.image("src/assets/images/logo-glucosense.png", use_column_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 # Función para convertir 'Sí'/'No' a 1/0
 def convertir_a_binario(opcion):
     return 1 if opcion == 'Sí' else 0
