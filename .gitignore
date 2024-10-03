@@ -59,3 +59,5 @@ outputs/models/*.h5
 diabetes.csv
 random_forest_model.pkl
 scaler.pkl
+
+diabetes_predictions.db
