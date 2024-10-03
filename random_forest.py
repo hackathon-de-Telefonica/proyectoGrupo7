@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 import pickle
 
+
 # Cargar los datos
 data = pd.read_csv('diabetes.csv')  # Asegúrate de que el archivo CSV esté en el directorio correcto
 
