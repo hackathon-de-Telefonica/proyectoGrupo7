@@ -1,0 +1,21 @@
+Fitting 5 folds for each of 24 candidates, totalling 120 fits
+Mejores hiperparámetros encontrados: {'max_depth': 20, 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 200}
+Puntuaciones de validación cruzada: [0.86575607 0.8656181  0.86508594 0.86687953 0.86575607]
+Precisión media: 0.87
+Matriz de confusión (dataset completo):
+[[217963    371]
+ [ 20918  14428]]
+
+
+Informe de clasificación (dataset completo):
+              precision    recall  f1-score   support
+
+         0.0       0.91      1.00      0.95    218334
+         1.0       0.97      0.41      0.58     35346
+
+    accuracy                           0.92    253680
+   macro avg       0.94      0.70      0.76    253680
+weighted avg       0.92      0.92      0.90    253680
+
+Precisión del modelo en el dataset completo: 0.92
+

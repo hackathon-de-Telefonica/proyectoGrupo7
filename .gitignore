@@ -56,3 +56,6 @@ outputs/models/*.h5
 *.tar
 *.tar.gz
 *.rar
+diabetes.csv
+random_forest_model.pkl
+scaler.pkl
