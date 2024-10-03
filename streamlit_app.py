@@ -11,27 +11,112 @@ st.set_page_config(page_title="Predicción de Diabetes", page_icon="🩺", layou
 st.markdown("""
 <style>
     body {
-        background-color: #e6ffe6;
-        color: #333;
+        background-color: #e8f5ff;
+        color: #fff;
+        font-family: 'Arial', sans-serif;
     }
+
     .stApp {
-        background-image: linear-gradient(to bottom, #a8e6cf, #e6ffe6);
+        background-image: linear-gradient(120deg, #b3e5fc 0%, #e8f5ff 100%);
     }
-    .stTextInput>div>div>input {
-        background-color: #f0fff0;
+
+    .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
-    .stSelectbox>div>div>select {
-        background-color: #f0fff0;
+
+    .navbar img {
+        height: 50px;
+        margin-right: 15px;
     }
-    .stNumberInput>div>div>input {
-        background-color: #f0fff0;
+
+    .navbar h1 {
+        color: white; 
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    input, select {
+        background-color: #ffffff;
+        border: 1px solid #90caf9;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    input:hover, select:hover {
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        border-color: #64b5f6;
+    }
+
+    .stButton>button {
+        background-color: #2196f3;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stButton>button:hover {
+        background-color: #1976d2;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .stSlider>div {
+        padding: 10px 0;
+    }
+
+    .stSlider>div>div>div>div {
+        color: #BFD9EEFF;
+        font-weight: bold;
+    }
+
+    h1, h2, h3, h4, h5 {
+        font-family: 'Arial', sans-serif;
+        color: #fff;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        color: #ffffff;
+        margin-bottom: 1.5rem;
+    }
+
+    img {
+        margin: 20px auto;
+        display: block;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .footer {
+        text-align: center;
+        padding: 15px 0;
+        background-color: #2196f3;
+        color: white;
+        position: relative;
+        bottom: 10px;
+        width: 100%;
     }
 </style>
-
-<div style="text-align: center; padding: 10px;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Glucose_molecule.png/220px-Glucose_molecule.png" alt="Diabetes Prediction" style="width: 150px; border-radius: 10px;">
-</div>
 """, unsafe_allow_html=True)
+
+# Contenido de la Navbar
+with st.container():
+    st.markdown('<div class="navbar">', unsafe_allow_html=True)
+    st.image("src/assets/images/logo-glucosense.png", use_column_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Función para convertir 'Sí'/'No' a 1/0
 def convertir_a_binario(opcion):
@@ -237,3 +322,6 @@ if model is not None:
     plot_feature_importance(model, feature_names)
 else:
     st.warning("No se puede mostrar la importancia de las características porque el modelo no se cargó correctamente.")
+
+# Footer
+st.markdown('<div class="footer">© Glucosense 2024</div>', unsafe_allow_html=True)
