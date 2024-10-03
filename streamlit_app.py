@@ -1,10 +1,11 @@
-import joblib
+import pickle
 import numpy as np
 import streamlit as st
 import requests
 import pandas as pd
-import mysql.connector
-from mysql.connector import Error
+import sqlite3
+import matplotlib.pyplot as plt
+from sklearn.exceptions import NotFittedError
 
 st.title('Predicción de Diabetes')
 
@@ -71,36 +72,42 @@ if st.button('Predecir'):
 st.subheader("Predicciones Anteriores")
 
 try:
-    connection = mysql.connector.connect(
-        host='localhost',
-        database='diabetes_predictions',
-        user='root',
-        password='admin'
-    )
-    
+    conn = sqlite3.connect('diabetes_predictions.db')
     query = "SELECT * FROM predictions ORDER BY id DESC LIMIT 10"
-    df = pd.read_sql(query, connection)
+    df = pd.read_sql(query, conn)
     st.dataframe(df)
-except Error as e:
+except sqlite3.Error as e:
     st.error(f"Error al conectar con la base de datos: {e}")
 finally:
-    if connection.is_connected():
-        connection.close()
-import matplotlib.pyplot as plt
+    if conn:
+        conn.close()
 
 def plot_feature_importance(model, feature_names):
-    importances = model.feature_importances_
-    indices = np.argsort(importances)[::-1]
-    
-    plt.figure(figsize=(10,6))
-    plt.title("Importancia de Características")
-    plt.bar(range(len(importances)), importances[indices])
-    plt.xticks(range(len(importances)), [feature_names[i] for i in indices], rotation=90)
-    plt.tight_layout()
-    st.pyplot(plt)
+    try:
+        importances = model.feature_importances_
+        indices = np.argsort(importances)[::-1]
+        
+        plt.figure(figsize=(10,6))
+        plt.title("Importancia de Características")
+        plt.bar(range(len(importances)), importances[indices])
+        plt.xticks(range(len(importances)), [feature_names[i] for i in indices], rotation=90)
+        plt.tight_layout()
+        st.pyplot(plt)
+    except NotFittedError:
+        st.error("El modelo no ha sido entrenado. No se puede mostrar la importancia de las características.")
+    except Exception as e:
+        st.error(f"Error al generar el gráfico de importancia de características: {str(e)}")
 
 # Cargar el modelo
-model = joblib.load('xgboost_model.joblib')
+try:
+    with open('random_forest_model.pkl', 'rb') as file:
+        model = pickle.load(file)
+except FileNotFoundError:
+    st.error("No se encontró el archivo del modelo 'random_forest_model.pkl'. Asegúrate de que el modelo esté entrenado y guardado correctamente.")
+    model = None
+except Exception as e:
+    st.error(f"Error al cargar el modelo: {str(e)}")
+    model = None
 
 # Obtener nombres de características
 feature_names = ["HighBP", "HighChol", "CholCheck", "BMI", "Smoker", "Stroke", 
@@ -110,36 +117,7 @@ feature_names = ["HighBP", "HighChol", "CholCheck", "BMI", "Smoker", "Stroke",
 
 # Mostrar gráfico de importancia de características
 st.subheader("Importancia de Características")
-plot_feature_importance(model, feature_names)
-# Instrucciones para configurar la base de datos MySQL:
-"""
-CREATE DATABASE diabetes_predictions;
-USE diabetes_predictions;
-
-CREATE TABLE predictions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    HighBP INT,
-    HighChol INT,
-    CholCheck INT,
-    BMI FLOAT,
-    Smoker INT,
-    Stroke INT,
-    HeartDiseaseorAttack INT,
-    PhysActivity INT,
-    Fruits INT,
-    Veggies INT,
-    HvyAlcoholConsump INT,
-    AnyHealthcare INT,
-    NoDocbcCost INT,
-    GenHlth INT,
-    MentHlth INT,
-    PhysHlth INT,
-    DiffWalk INT,
-    Sex INT,
-    Age INT,
-    Education INT,
-    Income INT,
-    prediction FLOAT,
-    prediction_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-"""
+if model is not None:
+    plot_feature_importance(model, feature_names)
+else:
+    st.warning("No se puede mostrar la importancia de las características porque el modelo no se cargó correctamente.")
