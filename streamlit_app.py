@@ -123,9 +123,9 @@ HeartDiseaseorAttack = st.selectbox('Enfermedad coronaria o infarto de miocardio
 PhysActivity = st.selectbox('Actividad física de forma continuada ', ['Sí', 'No'], help='Durante de 30 días')
 Fruits = st.selectbox('Consumo de frutas', ['Sí', 'No'], help='Una o más frutas por día.')
 Veggies = st.selectbox('Consumo de verduras', ['Sí', 'No'], help='Una o más verduras por día')
-HvyAlcoholConsump = st.selectbox('Consumo de alcohol por semana', ['Sí', 'No'], help='Hombre:14\nMujer:7')
+HvyAlcoholConsump = st.selectbox('Consumo de alcohol por semana', ['Sí', 'No'], help='Seleccione "Sí" si su consumo supera Hombre:14 | Mujer:7')
 AnyHealthcare = st.selectbox('Tiene seguro de salud', ['Sí', 'No'])
-NoDocbcCost = st.selectbox('No visita al médico por costo', ['Sí', 'No'])
+NoDocbcCost = st.selectbox('No ha podido acudir al médico por razones económicas en el último año.', ['Sí', 'No'])
 
 #GenHlth
 GenHlth_text = st.selectbox('Salud general', options=['Excelente', 'Muy bien', 'Bien', 'Regular', 'Mal'])
