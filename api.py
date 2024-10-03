@@ -1,15 +1,35 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import joblib
+import pickle
 import numpy as np
-import mysql.connector
-from mysql.connector import Error
+import sqlite3
+import os
 
 app = FastAPI()
 
 # Cargar el modelo y el scaler
-model = joblib.load('random_forest.joblib')
-scaler = joblib.load('scaler.joblib')
+with open('random_forest_model.pkl', 'rb') as file:
+    model = pickle.load(file)
+
+with open('scaler.pkl', 'rb') as file:
+    scaler = pickle.load(file)
+
+# Asegurarse de que la base de datos existe
+db_path = 'diabetes_predictions.db'
+if not os.path.exists(db_path):
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE predictions
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  HighBP INTEGER, HighChol INTEGER, CholCheck INTEGER, BMI REAL,
+                  Smoker INTEGER, Stroke INTEGER, HeartDiseaseorAttack INTEGER,
+                  PhysActivity INTEGER, Fruits INTEGER, Veggies INTEGER,
+                  HvyAlcoholConsump INTEGER, AnyHealthcare INTEGER, NoDocbcCost INTEGER,
+                  GenHlth INTEGER, MentHlth INTEGER, PhysHlth INTEGER, DiffWalk INTEGER,
+                  Sex INTEGER, Age INTEGER, Education INTEGER, Income INTEGER,
+                  prediction REAL, prediction_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    conn.commit()
+    conn.close()
 
 class DiabetesFeatures(BaseModel):
     HighBP: int
@@ -55,25 +75,16 @@ async def predict_diabetes(features: DiabetesFeatures):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-
 def save_to_database(features: DiabetesFeatures, prediction: float):
     try:
-        connection = mysql.connector.connect(
-            host='localhost:3306',
-            database='diabetes_predictions',
-            user='your_username',
-            password='your_password'
-        )
-        
-        cursor = connection.cursor()
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
         query = """INSERT INTO predictions 
                    (HighBP, HighChol, CholCheck, BMI, Smoker, Stroke, HeartDiseaseorAttack,
                     PhysActivity, Fruits, Veggies, HvyAlcoholConsump, AnyHealthcare,
                     NoDocbcCost, GenHlth, MentHlth, PhysHlth, DiffWalk, Sex, Age,
                     Education, Income, prediction) 
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                           %s, %s, %s, %s, %s, %s, %s)"""
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         values = (features.HighBP, features.HighChol, features.CholCheck, features.BMI,
                   features.Smoker, features.Stroke, features.HeartDiseaseorAttack,
                   features.PhysActivity, features.Fruits, features.Veggies,
@@ -81,10 +92,9 @@ def save_to_database(features: DiabetesFeatures, prediction: float):
                   features.GenHlth, features.MentHlth, features.PhysHlth, features.DiffWalk,
                   features.Sex, features.Age, features.Education, features.Income, prediction)
         cursor.execute(query, values)
-        connection.commit()
-    except Error as e:
+        conn.commit()
+    except sqlite3.Error as e:
         print(f"Error al guardar en la base de datos: {e}")
     finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
+        if conn:
+            conn.close()
