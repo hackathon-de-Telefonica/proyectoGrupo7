@@ -316,3 +316,6 @@ if model is not None:
     plot_feature_importance(model, feature_names)
 else:
     st.warning("No se puede mostrar la importancia de las características porque el modelo no se cargó correctamente.")
+
+# Footer
+st.markdown('<div class="footer">© Glucosense 2024</div>', unsafe_allow_html=True)
