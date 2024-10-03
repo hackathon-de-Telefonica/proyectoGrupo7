@@ -2,7 +2,7 @@
 FROM python:3.9-slim
 
 # Establecer el directorio de trabajo en el contenedor
-WORKDIR /app
+WORKDIR /
 
 # Copiar los archivos de requisitos primero para aprovechar la caché de Docker
 COPY requirements.txt .
